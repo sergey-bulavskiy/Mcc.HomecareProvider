@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Mcc.HomecareProvider.App.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,16 +9,15 @@ namespace Mcc.HomecareProvider.App.Controllers
     [ApiController]
     public class DevicesController : ControllerBase
     {
-        private DevicesService _devicesService;
+        private readonly DevicesService _devicesService;
 
         public DevicesController(DevicesService devicesService)
         {
             _devicesService = devicesService;
         }
 
-
         [HttpPost]
-        public Guid CreateDevice([FromBody] string serialNumber)
+        public Task<Guid> CreateDevice([FromQuery] string serialNumber)
         {
             return _devicesService.CreateDevice(serialNumber);
         }

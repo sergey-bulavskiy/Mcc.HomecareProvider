@@ -1,4 +1,6 @@
 using System;
+using Mcc.HomecareProvider.App;
+using Mcc.HomecareProvider.App.Services;
 using Mcc.HomecareProvider.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Mcc.HomecareProvider
 {
@@ -23,7 +27,23 @@ namespace Mcc.HomecareProvider
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            // Set Global JSON Converter. Need for function JsonConvert.SerializeObject
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+            
+            services.AddControllers()
+                .AddNewtonsoftJson(
+                    setupAction =>
+                    {
+                        setupAction.SerializerSettings.ReferenceLoopHandling =
+                            ReferenceLoopHandling.Ignore;
+                        setupAction.SerializerSettings.ContractResolver =
+                            new CamelCasePropertyNamesContractResolver();
+                    });
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Mcc.HomecareProvider", Version = "v1"});
@@ -43,6 +63,9 @@ namespace Mcc.HomecareProvider
                         provider.GetRequiredService<DbContextOptions<PostgresDbContext>>()));
             
             services.AddScoped<PostgresDbContext>();
+            services.AddScoped<DateTimeProvider>();
+            services.AddScoped<DevicesService>();
+            services.AddScoped<PatientService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

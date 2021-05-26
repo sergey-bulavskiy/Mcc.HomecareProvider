@@ -1,20 +1,32 @@
 using System;
+using System.Threading.Tasks;
+using Mcc.HomecareProvider.Domain;
 using Mcc.HomecareProvider.Persistence;
 
 namespace Mcc.HomecareProvider.App.Services
 {
     public class DevicesService
     {
-        private readonly PostgresDbContext _pgContext;
+        private readonly PostgresDbContext _dbContext;
+        private readonly DateTimeProvider _timeProvider;
 
-        public DevicesService(PostgresDbContext pgContext)
+        public DevicesService(PostgresDbContext dbContext, DateTimeProvider timeProvider)
         {
-            _pgContext = pgContext;
+            _dbContext = dbContext;
+            _timeProvider = timeProvider;
         }
 
-        public Guid CreateDevice(string serialNumber)
+        public async Task<Guid> CreateDevice(string serialNumber)
         {
-            return Guid.NewGuid();
+            var device = new Device(serialNumber, _timeProvider.UtcNow);
+
+            _dbContext.Devices.Add(device);
+            await _dbContext.SaveChangesAsync();
+
+            device.InitializeCurrentDeviceBinding();
+            await _dbContext.SaveChangesAsync();
+
+            return device.Id;
         }
     }
 }

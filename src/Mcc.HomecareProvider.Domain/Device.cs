@@ -24,7 +24,7 @@ namespace Mcc.HomecareProvider.Domain
         public DeviceBinding CurrentBinding { get; private set; }
 
         public bool IsAssignedToDevice => CurrentBinding.HasPatient();
-        public Guid CurrentBindingId { get; private set; }
+        public Guid? CurrentBindingId { get; private set; }
 
         public DeviceBinding AssignToPatient(Patient patient, DateTimeOffset currentTime)
         {

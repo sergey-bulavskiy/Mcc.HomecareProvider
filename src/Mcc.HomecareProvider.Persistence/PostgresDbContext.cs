@@ -16,7 +16,8 @@ namespace Mcc.HomecareProvider.Persistence
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Device>().HasIndex(x => x.SerialNumber);
+            builder.Entity<Device>().HasIndex(x => x.SerialNumber).IsUnique();
+            builder.Entity<Device>().Property(x => x.CurrentBindingId).IsRequired(false);
             builder.Entity<Device>()
                 .Property(e => e.Id)
                 .ValueGeneratedNever();
