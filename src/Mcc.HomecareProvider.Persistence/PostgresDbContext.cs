@@ -5,6 +5,10 @@ namespace Mcc.HomecareProvider.Persistence
 {
     public class PostgresDbContext : DbContext
     {
+        public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options)
+        {
+        }
+
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<DeviceBinding> DeviceBindings { get; set; }
@@ -30,7 +34,7 @@ namespace Mcc.HomecareProvider.Persistence
                 .WithOne(p => p.CurrentBinding)
                 .HasForeignKey<Patient>(p => p.CurrentBindingId)
                 .IsRequired(false);
-            
+
             builder.Entity<Patient>()
                 .Property(e => e.Id)
                 .ValueGeneratedNever();
@@ -41,6 +45,10 @@ namespace Mcc.HomecareProvider.Persistence
                 .IsRequired(false);
             builder.Entity<Patient>().Property(e => e.FirstName).IsRequired();
             builder.Entity<Patient>().Property(e => e.LastName).IsRequired();
+            
+            builder.Entity<StatisticalDay>()
+                .Property(e => e.Id)
+                .ValueGeneratedNever();
         }
     }
 }

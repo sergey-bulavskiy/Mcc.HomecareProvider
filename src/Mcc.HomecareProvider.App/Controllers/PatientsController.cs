@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Mcc.HomecareProvider.Controllers
+namespace Mcc.HomecareProvider.App.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
