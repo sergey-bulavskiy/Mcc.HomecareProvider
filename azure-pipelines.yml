@@ -6,7 +6,7 @@
 trigger:
   branches:
     include:
-    - master
+    - main
 
 variables:
   BUILD_NUMBER: 0.1.$(Build.BuildId)
