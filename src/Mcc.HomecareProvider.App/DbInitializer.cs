@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Mcc.HomecareProvider.Domain;
 using Mcc.HomecareProvider.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +46,7 @@ namespace Mcc.HomecareProvider.App
                     var device = new Device(serialNumberAsInt.ToString(), randomTime);
                     _context.Add(device);
                     _context.SaveChanges();
-                    
+
                     if (!device.SerialNumber.StartsWith("12"))
                         device.InitializeCurrentDeviceBinding();
                 }
@@ -98,7 +99,7 @@ namespace Mcc.HomecareProvider.App
                     DateTimeOffset randomTime =
                         DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 100)) -
                         TimeSpan.FromSeconds(rnd.Next());
-                    
+
                     var device = _context.Devices
                         .Include(d => d.CurrentBinding)
                         .ThenInclude(d => d.Patient)
@@ -115,6 +116,46 @@ namespace Mcc.HomecareProvider.App
 
                 _context.SaveChanges();
             }
+
+            if (!SqlTaskIsPrepared())
+            {
+                PrepareDataForSqlTask();
+            }
+        }
+
+        private void PrepareDataForSqlTask()
+        {
+            var patients = _context.Patients
+                .Include(p => p.CurrentBinding)
+                .Where(x => x.CurrentBindingId == null)
+                .ToList();
+
+            var devices = _context.Devices
+                .Include(d => d.CurrentBinding)
+                .ThenInclude(b => b.Patient)
+                .Where(d => d.CurrentBinding.PatientId == null && !d.SerialNumber.StartsWith("12"))
+                .ToList();
+
+            for (var i = 1; i < 6; i++)
+            {
+                Patient patient = patients[i];
+                patient.Email = $"ShouldEndUpInOutput{i}@gmail.com";
+
+                for (var j = 0; j < i; j++)
+                {
+                    var device = devices[i];
+                    device.AssignToPatient(patient, DateTimeOffset.Now);
+                }
+            }
+
+            _context.SaveChanges();
+        }
+
+        private bool SqlTaskIsPrepared()
+        {
+            var requiredPatients = _context.Patients
+                .Where(x => x.Email.StartsWith("ShouldEndUpInOutput")).ToList();
+            return requiredPatients.Count != 0;
         }
 
         /// <summary>

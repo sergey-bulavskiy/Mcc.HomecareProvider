@@ -32,10 +32,6 @@ namespace Mcc.HomecareProvider.Domain
 
             if (patient == CurrentBinding.Patient) return null;
 
-            if (patient.HasDevice())
-                throw new ArgumentException(
-                    $"Patient with Id: {patient.Id} already assigned to a device");
-
             EnsurePropertyLoaded(nameof(CurrentBinding), CurrentBinding);
             if (!IsAssignedToPatient)
             {
