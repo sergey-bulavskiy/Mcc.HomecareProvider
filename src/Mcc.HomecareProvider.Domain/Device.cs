@@ -30,16 +30,16 @@ namespace Mcc.HomecareProvider.Domain
         {
             if (patient == null) throw new ArgumentNullException(nameof(patient));
 
-            if (patient == CurrentBinding.Patient) return null;
-
             EnsurePropertyLoaded(nameof(CurrentBinding), CurrentBinding);
-            if (!IsAssignedToPatient)
-            {
-                CurrentBinding.InitializeWithPatient(patient, currentTime);
-                
-                //bug 
-                patient.DateOfBirth = DateTime.Now;
-            }
+            var binding = new DeviceBinding(this, patient, currentTime);
+            binding.InitializeWithPatient(patient, currentTime);
+            CurrentBinding = binding;
+            DeviceBindings.Add(binding);
+            patient.BindDevice(CurrentBinding, currentTime);
+            
+            
+            //bug 
+            patient.DateOfBirth = DateTime.Now;
 
             return CurrentBinding;
         }

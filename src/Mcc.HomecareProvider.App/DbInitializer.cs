@@ -119,14 +119,21 @@ namespace Mcc.HomecareProvider.App
 
             if (!SqlTaskIsPrepared())
             {
-                PrepareDataForSqlTask();
+                PrepareDataForFirstSqlTask();
             }
         }
 
-        private void PrepareDataForSqlTask()
+        /// <summary>
+        /// First SQL Task for tester is something like:
+        /// Sort patients by number of devices they had for a whole period,
+        /// find First/Last names of the patients with more than 1 device, and find patient
+        /// with biggest number of devices historically. 
+        /// </summary>
+        private void PrepareDataForFirstSqlTask()
         {
             var patients = _context.Patients
                 .Include(p => p.CurrentBinding)
+                .Include(p => p.DeviceBindings)
                 .Where(x => x.CurrentBindingId == null)
                 .ToList();
 
@@ -141,9 +148,9 @@ namespace Mcc.HomecareProvider.App
                 Patient patient = patients[i];
                 patient.Email = $"ShouldEndUpInOutput{i}@gmail.com";
 
-                for (var j = 0; j < i; j++)
+                for (var k = 0; k < i; k++)
                 {
-                    var device = devices[i];
+                    var device = devices[k];
                     device.AssignToPatient(patient, DateTimeOffset.Now);
                 }
             }

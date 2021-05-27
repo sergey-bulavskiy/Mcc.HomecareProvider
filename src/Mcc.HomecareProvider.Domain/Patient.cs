@@ -41,5 +41,11 @@ namespace Mcc.HomecareProvider.Domain
         {
             return CurrentBinding?.Device != null;
         }
+
+        public void BindDevice(DeviceBinding binding, DateTimeOffset currentTime)
+        {
+            DeviceBindings.Add(binding);
+            CurrentBinding = binding;
+        }
     }
 }
