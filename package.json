@@ -1,0 +1,18 @@
+{
+  "name": "@mcc/homecareprovider-build",
+  "version": "0.1.4",
+  "private": true,
+  "dependencies": {
+    "concurrently": "5.2.0",
+    "copyfiles": "2.3.0",
+    "cross-env": "7.0.3",
+    "rimraf": "3.0.2"
+  },
+  "scripts": {
+    "build-dotnet-version": "cross-env-shell dotnet publish Mcc.HomecareProvider.sln -c Release -o publish $VERSION",
+    "build-dotnet": "rimraf publish && cross-env VERSION=\\\"/p:Version\\\"=\\\"$npm_package_version\\\" yarn build-dotnet-version",
+    "docker-build": "cross-env-shell docker build -t homecareprovider:latest -t homecareprovider:$npm_package_version -f ./Dockerfile publish",
+    "build-with-docker": "yarn build && yarn docker-build",
+    "build": "yarn build-dotnet"
+  }
+}
