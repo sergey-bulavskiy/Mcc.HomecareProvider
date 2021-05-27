@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Mcc.HomecareProvider.App;
 using Mcc.HomecareProvider.App.Middleware;
 using Mcc.HomecareProvider.App.Services;
@@ -47,6 +48,8 @@ namespace Mcc.HomecareProvider
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Mcc.HomecareProvider", Version = "v1"});
+                string basePath = AppContext.BaseDirectory;
+                c.IncludeXmlComments(Path.Combine(basePath, "Mcc.HomecareProvider.App.xml"));
             });
 
             var dbString = Configuration.GetConnectionString("DefaultConnection");

@@ -127,39 +127,39 @@ namespace Mcc.HomecareProvider.App
         }
 
         /// <summary>
-        /// Find exactly which serial number given patient had on the specific date time.
+        ///     Find exactly which serial number given patient had on the specific date time.
         /// </summary>
         private void PrepareDataForSecondSqlTask()
         {
-            DateTimeOffset createdAt = DateTimeOffset.Now;
+            var createdAt = DateTimeOffset.Now;
 
             var patient = new Patient(
                 firstName: "Jimi",
                 lastName: "Hendrix",
                 email: "jimi.hendrix@gmail.com",
                 createdAt: createdAt,
-                dateOfBirth: new DateTime(year: 1942, month: 11, day: 27));
+                dateOfBirth: new DateTime(1942, 11, 27));
 
             _context.Patients.Add(patient);
             _context.SaveChanges();
 
-            var serialNumbers = new List<string>() {"999443", "600423", "555662", "777332"};
+            var serialNumbers = new List<string> {"999443", "600423", "555662", "777332"};
             foreach (var sn in serialNumbers)
             {
                 var device = new Device(sn, createdAt);
                 _context.Devices.Add(device);
                 _context.SaveChanges();
-                
+
                 device.InitializeCurrentDeviceBinding();
                 _context.SaveChanges();
             }
 
-            var datesOfAssignment = new List<DateTime>()
+            var datesOfAssignment = new List<DateTime>
             {
-                new(year: 2000, month: 12, day: 31),
-                new(year: 2005, month: 5, day: 6),
-                new(year: 2005, month: 5, day: 8),
-                new(year: 2010, month: 1, day: 1),
+                new(2000, 12, 31),
+                new(2005, 5, 6),
+                new(2005, 5, 8),
+                new(2010, 1, 1)
             };
 
             var dbDevices = _context.Devices
