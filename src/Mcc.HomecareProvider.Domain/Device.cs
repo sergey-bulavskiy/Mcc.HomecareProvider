@@ -37,7 +37,13 @@ namespace Mcc.HomecareProvider.Domain
                     $"Patient with Id: {patient.Id} already assigned to a device");
 
             EnsurePropertyLoaded(nameof(CurrentBinding), CurrentBinding);
-            if (!IsAssignedToPatient) CurrentBinding.InitializeWithPatient(patient, currentTime);
+            if (!IsAssignedToPatient)
+            {
+                CurrentBinding.InitializeWithPatient(patient, currentTime);
+                
+                //bug 
+                patient.DateOfBirth = DateTime.Now;
+            }
 
             return CurrentBinding;
         }

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mcc.HomecareProvider.Persistence.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20210527053809_InitialCreate")]
+    [Migration("20210527091425_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,19 +101,6 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Patients");
-                });
-
-            modelBuilder.Entity("Mcc.HomecareProvider.Domain.StatisticalDay", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("StatisticalDays");
                 });
 
             modelBuilder.Entity("Mcc.HomecareProvider.Domain.Device", b =>

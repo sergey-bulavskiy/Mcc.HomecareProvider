@@ -12,7 +12,6 @@ namespace Mcc.HomecareProvider.Persistence
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<DeviceBinding> DeviceBindings { get; set; }
-        public DbSet<StatisticalDay> StatisticalDays { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -47,10 +46,6 @@ namespace Mcc.HomecareProvider.Persistence
             builder.Entity<Patient>().Property(p => p.LastName).IsRequired();
             builder.Entity<Patient>().Property(p => p.Email).IsRequired();
             builder.Entity<Patient>().HasIndex(p => p.Email).IsUnique();
-
-            builder.Entity<StatisticalDay>()
-                .Property(e => e.Id)
-                .ValueGeneratedNever();
         }
     }
 }

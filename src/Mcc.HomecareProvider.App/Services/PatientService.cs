@@ -21,8 +21,9 @@ namespace Mcc.HomecareProvider.App.Services
         {
             var patient = new Patient(
                 email: dto.Email,
-                firstName: dto.FirstName,
-                lastName: dto.LastName,
+                // bug
+                firstName: dto.FirstName.Substring(0, 10),
+                lastName: dto.LastName.Substring(0, 10),
                 dateOfBirth: dto.DateOfBirth,
                 createdAt: _timeProvider.UtcNow);
 

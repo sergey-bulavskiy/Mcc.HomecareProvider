@@ -8,18 +8,6 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "StatisticalDays",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Value = table.Column<double>(type: "double precision", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StatisticalDays", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Devices",
                 columns: table => new
                 {
@@ -135,9 +123,6 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_DeviceBindings_Patients_PatientId",
                 table: "DeviceBindings");
-
-            migrationBuilder.DropTable(
-                name: "StatisticalDays");
 
             migrationBuilder.DropTable(
                 name: "Devices");

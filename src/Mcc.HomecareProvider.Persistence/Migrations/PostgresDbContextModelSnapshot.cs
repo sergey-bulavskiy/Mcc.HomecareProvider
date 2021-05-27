@@ -101,19 +101,6 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     b.ToTable("Patients");
                 });
 
-            modelBuilder.Entity("Mcc.HomecareProvider.Domain.StatisticalDay", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("StatisticalDays");
-                });
-
             modelBuilder.Entity("Mcc.HomecareProvider.Domain.Device", b =>
                 {
                     b.HasOne("Mcc.HomecareProvider.Domain.DeviceBinding", "CurrentBinding")

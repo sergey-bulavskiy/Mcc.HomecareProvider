@@ -45,15 +45,19 @@ namespace Mcc.HomecareProvider.App
                     var device = new Device(serialNumberAsInt.ToString(), randomTime);
                     _context.Add(device);
                     _context.SaveChanges();
-
-                    // Introduce some random anomalies with unitialized binding;
-                    if (i == 100 || i == 110 || i == 75)
-                    {
-                    }
-                    else
-                    {
+                    
+                    if (!device.SerialNumber.StartsWith("12"))
                         device.InitializeCurrentDeviceBinding();
-                    }
+                }
+
+                // Artificial anomaly that some number of our devices are "bugged". 
+                for (var i = 0; i < 5; i++)
+                {
+                    var randomTime =
+                        DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 100));
+                    var serialNumberAsInt = rnd.Next(minValue: 120000, maxValue: 129999);
+                    var device = new Device(serialNumberAsInt.ToString(), randomTime);
+                    _context.Add(device);
                 }
 
                 _context.SaveChanges();
@@ -64,7 +68,8 @@ namespace Mcc.HomecareProvider.App
                 for (int i = 0; i < 150; i++)
                 {
                     DateTimeOffset randomTime =
-                        DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 10000)) - TimeSpan.FromSeconds(rnd.Next());
+                        DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 10000)) -
+                        TimeSpan.FromSeconds(rnd.Next());
 
                     DateTime randomDate = DateTime.Now - TimeSpan.FromDays(rnd.Next(minValue: 3500, maxValue: 30800));
 
@@ -91,17 +96,19 @@ namespace Mcc.HomecareProvider.App
                 for (int i = 0; i < 75; i++)
                 {
                     DateTimeOffset randomTime =
-                        DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 100));
+                        DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 100)) -
+                        TimeSpan.FromSeconds(rnd.Next());
+                    
                     var device = _context.Devices
                         .Include(d => d.CurrentBinding)
-                            .ThenInclude(d => d.Patient)
+                        .ThenInclude(d => d.Patient)
                         .ToList()[i];
 
                     // Since we have anomaly in devices, that some of them not initialized properly, 
                     // we need to make sure that we won't accidentally "fix" them by assigning.
                     if (device.CurrentBinding == null || device.CurrentBinding.HasPatient())
                         continue;
-                    
+
                     var patient = _context.Patients.Include(x => x.CurrentBinding).ToList()[i];
                     device.AssignToPatient(patient, randomTime);
                 }
