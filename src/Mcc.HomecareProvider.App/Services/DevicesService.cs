@@ -53,7 +53,7 @@ namespace Mcc.HomecareProvider.App.Services
             var device = await _dbContext.Devices.SingleOrDefaultAsync(d => d.Id == dto.DeviceId);
             if (device is null)
             {
-                await DeletePatientIfExists(dto.DeviceId);
+                await DeletePatientIfExists(dto.PatientId);
                 throw new ResourceNotFoundException(
                     $"Given {nameof(dto.DeviceId)}: {dto.DeviceId} is not found in the database.");
             }
@@ -68,14 +68,20 @@ namespace Mcc.HomecareProvider.App.Services
         {
             var patient = await _dbContext.Patients.SingleOrDefaultAsync(x => x.Id == id);
             if (patient is not null)
+            {
                 _dbContext.Patients.Remove(patient);
+                await _dbContext.SaveChangesAsync();
+            }
         }
 
         private async Task DeleteDeviceIfExists(Guid id)
         {
             var device = await _dbContext.Devices.SingleOrDefaultAsync(x => x.Id == id);
             if (device is not null)
+            {
                 _dbContext.Devices.Remove(device);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }
