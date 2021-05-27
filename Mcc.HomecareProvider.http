@@ -1,0 +1,18 @@
+
+# Post a device.
+POST http://localhost:5000/api/devices
+Content-Type: application/json
+
+"serialNumber": "123456"
+
+###
+
+#Post a patient
+POST http://localhost:5000/api/patients
+Content-Type: application/json
+
+{
+  "firstName": "sergey",
+  "lastName": "bulavskiy",
+  "dateOfBirth": "03.08.1993"
+}

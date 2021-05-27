@@ -1,5 +1,6 @@
 using System;
 using Mcc.HomecareProvider.App;
+using Mcc.HomecareProvider.App.Middleware;
 using Mcc.HomecareProvider.App.Services;
 using Mcc.HomecareProvider.Persistence;
 using Microsoft.AspNetCore.Builder;
@@ -74,13 +75,14 @@ namespace Mcc.HomecareProvider
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mcc.HomecareProvider v1"));
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mcc.HomecareProvider v1"));
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             
             IServiceProvider container = app.ApplicationServices;
             RunMigration(container);

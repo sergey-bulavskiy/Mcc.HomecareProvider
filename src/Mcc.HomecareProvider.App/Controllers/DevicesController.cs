@@ -21,5 +21,17 @@ namespace Mcc.HomecareProvider.App.Controllers
         {
             return _devicesService.CreateDevice(serialNumber);
         }
+
+        [HttpPut]
+        public Task<Guid> AssignDeviceToPatient([FromBody] AssignDeviceToPatientDto dto)
+        {
+            return _devicesService.AssignDeviceToPatient(dto);
+        }
+    }
+
+    public class AssignDeviceToPatientDto
+    {
+        public Guid PatientId { get; set; }
+        public Guid DeviceId { get; set; }
     }
 }
