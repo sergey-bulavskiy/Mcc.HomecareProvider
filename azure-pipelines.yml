@@ -1,0 +1,82 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - master
+
+variables:
+  BUILD_NUMBER: 0.1.$(Build.BuildId)
+  DOCTL_URL: https://github.com/digitalocean/doctl/releases/download/v1.60.0/doctl-1.60.0-linux-amd64.tar.gz
+  DOCTL_DEPLOY_APP_ID: df52fed6-95de-4f03-9a22-f31924e0ecbc
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'
+  displayName: 'Install Node.js'
+
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '5.x'
+
+- script: |
+    yarn config set network-timeout 300000 -g
+  displayName: 'increase yarn install timeout'
+
+- task: Cache@2
+  inputs:
+    key: 'node_modules|root|$(Agent.OS)|./yarn.lock'
+    path: $(Build.SourcesDirectory)/node_modules
+    cacheHitVar: YARN_CACHE_RESTORED
+  displayName: Cache npm packages
+  continueOnError: true
+  
+- script: |
+    yarn --frozen-lockfile
+  displayName: 'yarn install'
+
+- script: |
+    dotnet restore
+  displayName: 'dotnet restore'
+
+- script: |
+    npm --no-git-tag-version version $(BUILD_NUMBER) --allow-same-version
+  displayName: 'set version'
+
+- script: |
+    yarn build
+  displayName: 'build'
+
+- script: |
+    wget $(DOCTL_URL)
+    tar xf ./doctl-1.60.0-linux-amd64.tar.gz
+  displayName: 'Download Digital Ocean Control binary'
+    
+- script: |
+    ./doctl auth init -t $(DOCTL_TOKEN)
+    ./doctl registry login --expiry-seconds 600
+  displayName: 'Authenticate at Digital Ocean'  
+  
+- task: Docker@2
+  condition: succeeded()
+  inputs:
+    repository: 'registry.digitalocean.com/test-mcc-registry/homecareprovider'
+    command: 'buildAndPush'
+    Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+    buildContext: '$(Build.SourcesDirectory)/publish'
+    tags: |
+      $(BUILD_NUMBER)
+      latest
+  displayName: 'build and push version+latest'
+
+- script: |
+    ./doctl apps create-deployment $(DOCTL_DEPLOY_APP_ID)
+  displayName: 'Deploy to Digital Ocean'

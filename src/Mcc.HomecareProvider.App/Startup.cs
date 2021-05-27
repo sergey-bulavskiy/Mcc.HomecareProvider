@@ -50,8 +50,7 @@ namespace Mcc.HomecareProvider
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Mcc.HomecareProvider", Version = "v1"});
             });
 
-            var dbString =
-                "Username=postgres;Password=postgres;Host=localhost;Port=5432;Database=hcp-db;Pooling=true;Keepalive=5;Command Timeout=60;";
+            var dbString = Configuration.GetConnectionString("DefaultConnection");
             services
                 .AddDbContext<PostgresDbContext>(
                     opt => opt.UseNpgsql(dbString),
