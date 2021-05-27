@@ -10,12 +10,14 @@ namespace Mcc.HomecareProvider.Domain
         }
 
         public Patient(
+            string email,
             string firstName,
             string lastName,
             DateTime dateOfBirth,
             DateTimeOffset createdAt)
         {
             DeviceBindings = new List<DeviceBinding>();
+            Email = email;
             FirstName = firstName;
             LastName = lastName;
             DateOfBirth = dateOfBirth;
@@ -26,6 +28,7 @@ namespace Mcc.HomecareProvider.Domain
         public Guid Id { get; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
         public DateTime DateOfBirth { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
 

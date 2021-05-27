@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mcc.HomecareProvider.Persistence.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20210527041337_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210527053809_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -80,6 +80,10 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -91,6 +95,9 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CurrentBindingId")
+                        .IsUnique();
+
+                    b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("Patients");

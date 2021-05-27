@@ -20,6 +20,7 @@ namespace Mcc.HomecareProvider.App.Services
         public async Task<Guid> CreatePatient(CreatePatientDto dto)
         {
             var patient = new Patient(
+                email: dto.Email,
                 firstName: dto.FirstName,
                 lastName: dto.LastName,
                 dateOfBirth: dto.DateOfBirth,

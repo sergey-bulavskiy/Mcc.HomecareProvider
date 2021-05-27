@@ -43,9 +43,11 @@ namespace Mcc.HomecareProvider.Persistence
                 .WithOne(b => b.Patient)
                 .HasForeignKey(b => b.PatientId)
                 .IsRequired(false);
-            builder.Entity<Patient>().Property(e => e.FirstName).IsRequired();
-            builder.Entity<Patient>().Property(e => e.LastName).IsRequired();
-            
+            builder.Entity<Patient>().Property(p => p.FirstName).IsRequired();
+            builder.Entity<Patient>().Property(p => p.LastName).IsRequired();
+            builder.Entity<Patient>().Property(p => p.Email).IsRequired();
+            builder.Entity<Patient>().HasIndex(p => p.Email).IsUnique();
+
             builder.Entity<StatisticalDay>()
                 .Property(e => e.Id)
                 .ValueGeneratedNever();

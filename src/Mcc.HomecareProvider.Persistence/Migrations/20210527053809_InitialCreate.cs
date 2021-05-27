@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Mcc.HomecareProvider.Persistence.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -39,6 +39,7 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CurrentBindingId = table.Column<Guid>(type: "uuid", nullable: true)
@@ -100,6 +101,12 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                 name: "IX_Patients_CurrentBindingId",
                 table: "Patients",
                 column: "CurrentBindingId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Patients_Email",
+                table: "Patients",
+                column: "Email",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
