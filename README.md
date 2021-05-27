@@ -30,3 +30,12 @@ Device Binding represents the fact that at a specific period of time a device, w
 2. Find what serial number of the device that was assigned to the patient with email "jimi.hendrix@gmail.com" at 7th of May, 2005 year.
 
 
+Useful tools: 
+- free pg db client - https://www.pgadmin.org/
+- other db client (paid but with trial) - https://www.jetbrains.com/datagrip/
+
+API clients: 
+- Postman - https://www.postman.com/
+- VS Code Rest Client extension - https://marketplace.visualstudio.com/items?itemName=humao.rest-client 
+(VS Code rest client extension [snippet](https://github.com/sergey-bulavskiy/Mcc.HomecareProvider/blob/main/Mcc.HomecareProvider.http))
+- serviceUrl/swagger/index.html - Third possible way to test out API, should be opened by-default.  (service url will be given to you)
