@@ -23,6 +23,7 @@ namespace Mcc.HomecareProvider.App.Controllers
         }
 
         [HttpPut]
+        [Route("assign")]
         public Task<Guid> AssignDeviceToPatient([FromBody] AssignDeviceToPatientDto dto)
         {
             return _devicesService.AssignDeviceToPatient(dto);

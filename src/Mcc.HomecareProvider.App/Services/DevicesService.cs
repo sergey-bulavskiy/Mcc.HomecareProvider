@@ -24,7 +24,7 @@ namespace Mcc.HomecareProvider.App.Services
             var isDeviceExists = await _dbContext.Devices.AnyAsync(d => d.SerialNumber == serialNumber);
             if (isDeviceExists)
                 throw new ValidationException($"Device with such serial number: {serialNumber} already exists.");
-            
+
             var device = new Device(serialNumber, _timeProvider.UtcNow);
 
             _dbContext.Devices.Add(device);
@@ -41,13 +41,15 @@ namespace Mcc.HomecareProvider.App.Services
             var patient = await _dbContext.Patients.SingleOrDefaultAsync(p => p.Id == dto.PatientId);
             if (patient is null)
             {
-                throw new ResourceNotFoundException($"Given {nameof(dto.PatientId)} is not found in the database.");
+                throw new ResourceNotFoundException(
+                    $"Given {nameof(dto.PatientId)}: {dto.PatientId} is not found in the database.");
             }
 
             var device = await _dbContext.Devices.SingleOrDefaultAsync(d => d.Id == dto.DeviceId);
             if (device is null)
             {
-                throw new ResourceNotFoundException($"Given {nameof(dto.DeviceId)} is not found in the database.");
+                throw new ResourceNotFoundException(
+                    $"Given {nameof(dto.DeviceId)}: {dto.DeviceId} is not found in the database.");
             }
 
             var newBinding = device.AssignToPatient(patient, _timeProvider.UtcNow);

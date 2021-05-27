@@ -3,11 +3,21 @@
 POST http://localhost:5000/api/devices
 Content-Type: application/json
 
-"serialNumber": "123456"
+"serialNumber": "123334455667"
 
 ###
 
-#Post a patient
+# Assign a Device
+PUT http://localhost:5000/api/devices/assign
+Content-Type: application/json
+
+{
+    "patientId": "71976b71-faf3-468c-a304-8c75b541dcc3",
+    "deviceId": ""
+}
+###
+
+# Post a patient
 POST http://localhost:5000/api/patients
 Content-Type: application/json
 
@@ -16,3 +26,4 @@ Content-Type: application/json
   "lastName": "bulavskiy",
   "dateOfBirth": "03.08.1993"
 }
+

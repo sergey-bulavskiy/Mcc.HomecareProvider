@@ -64,9 +64,9 @@ namespace Mcc.HomecareProvider.App
                 for (int i = 0; i < 150; i++)
                 {
                     DateTimeOffset randomTime =
-                        DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 100));
+                        DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 10000)) - TimeSpan.FromSeconds(rnd.Next());
 
-                    DateTime randomDate = DateTime.Now - TimeSpan.FromDays(rnd.Next(minValue: 3500, maxValue: 3800));
+                    DateTime randomDate = DateTime.Now - TimeSpan.FromDays(rnd.Next(minValue: 3500, maxValue: 30800));
 
                     string email = GetSaltString() + "@gmail.com";
 
@@ -88,7 +88,7 @@ namespace Mcc.HomecareProvider.App
 
             if (!_context.DeviceBindings.Any(b => b.PatientId != null))
             {
-                for (int i = 0; i < 25; i++)
+                for (int i = 0; i < 75; i++)
                 {
                     DateTimeOffset randomTime =
                         DateTimeOffset.Now - TimeSpan.FromDays(rnd.Next(minValue: 1, maxValue: 100));
@@ -110,16 +110,19 @@ namespace Mcc.HomecareProvider.App
             }
         }
 
-        protected String GetSaltString()
+        /// <summary>
+        ///  Stole it from: https://stackoverflow.com/a/45841798
+        /// </summary>
+        private String GetSaltString()
         {
-            String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            const string saltchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
             StringBuilder salt = new StringBuilder();
             Random rnd = new Random();
             while (salt.Length < 10)
             {
                 // length of the random string.
-                int index = (int) (rnd.NextDouble() * SALTCHARS.Length);
-                salt.Append(SALTCHARS[index]);
+                int index = (int) (rnd.NextDouble() * saltchars.Length);
+                salt.Append(saltchars[index]);
             }
 
             String saltStr = salt.ToString();
