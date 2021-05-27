@@ -12,12 +12,12 @@ namespace Mcc.HomecareProvider.App
         {
             void InitDb(IHost host)
             {
-                using (IServiceScope scope = host.Services.CreateScope())
+                using (var scope = host.Services.CreateScope())
                 {
-                    IServiceProvider services = scope.ServiceProvider;
+                    var services = scope.ServiceProvider;
                     try
                     {
-                        DbInitializer dbInitializer = services.GetRequiredService<DbInitializer>();
+                        var dbInitializer = services.GetRequiredService<DbInitializer>();
                         dbInitializer.Initialize();
                     }
                     catch (Exception ex)
@@ -28,13 +28,13 @@ namespace Mcc.HomecareProvider.App
                     }
                 }
             }
-            
-            IHostBuilder builder = Host.CreateDefaultBuilder(args)
+
+            var builder = Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
 
-            IHost host = builder.Build();
+            var host = builder.Build();
             InitDb(host);
-            
+
             host.Run();
         }
     }

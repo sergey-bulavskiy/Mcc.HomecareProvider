@@ -8,8 +8,8 @@ namespace Mcc.HomecareProvider.App.Services
 {
     public class PatientService
     {
-        private readonly DateTimeProvider _timeProvider;
         private readonly PostgresDbContext _dbContext;
+        private readonly DateTimeProvider _timeProvider;
 
         public PatientService(DateTimeProvider timeProvider, PostgresDbContext dbContext)
         {
@@ -20,12 +20,12 @@ namespace Mcc.HomecareProvider.App.Services
         public async Task<Guid> CreatePatient(CreatePatientDto dto)
         {
             var patient = new Patient(
-                email: dto.Email,
+                dto.Email,
                 // bug
-                firstName: dto.FirstName.Substring(0, 10),
-                lastName: dto.LastName.Substring(0, 10),
-                dateOfBirth: dto.DateOfBirth,
-                createdAt: _timeProvider.UtcNow);
+                dto.FirstName.Substring(0, 10),
+                dto.LastName.Substring(0, 10),
+                dto.DateOfBirth,
+                _timeProvider.UtcNow);
 
             _dbContext.Patients.Add(patient);
             await _dbContext.SaveChangesAsync();

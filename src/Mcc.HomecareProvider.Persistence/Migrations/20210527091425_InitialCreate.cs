@@ -8,108 +8,102 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Devices",
-                columns: table => new
+                "Devices",
+                table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    SerialNumber = table.Column<string>(type: "text", nullable: true),
-                    CurrentBindingId = table.Column<Guid>(type: "uuid", nullable: true)
+                    Id = table.Column<Guid>("uuid", nullable: false),
+                    SerialNumber = table.Column<string>("text", nullable: true),
+                    CurrentBindingId = table.Column<Guid>("uuid", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Devices", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Devices", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Patients",
-                columns: table => new
+                "Patients",
+                table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    CurrentBindingId = table.Column<Guid>(type: "uuid", nullable: true)
+                    Id = table.Column<Guid>("uuid", nullable: false),
+                    FirstName = table.Column<string>("text", nullable: false),
+                    LastName = table.Column<string>("text", nullable: false),
+                    Email = table.Column<string>("text", nullable: false),
+                    DateOfBirth = table.Column<DateTime>("timestamp without time zone", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>("timestamp with time zone", nullable: false),
+                    CurrentBindingId = table.Column<Guid>("uuid", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Patients", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Patients", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "DeviceBindings",
-                columns: table => new
+                "DeviceBindings",
+                table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    PatientId = table.Column<Guid>(type: "uuid", nullable: true),
-                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AssignedToPatientAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    Id = table.Column<Guid>("uuid", nullable: false),
+                    PatientId = table.Column<Guid>("uuid", nullable: true),
+                    DeviceId = table.Column<Guid>("uuid", nullable: false),
+                    AssignedToPatientAt = table.Column<DateTimeOffset>("timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceBindings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeviceBindings_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
-                        principalColumn: "Id",
+                        "FK_DeviceBindings_Devices_DeviceId",
+                        x => x.DeviceId,
+                        "Devices",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DeviceBindings_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "Id",
+                        "FK_DeviceBindings_Patients_PatientId",
+                        x => x.PatientId,
+                        "Patients",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceBindings_DeviceId",
-                table: "DeviceBindings",
-                column: "DeviceId");
+                "IX_DeviceBindings_DeviceId",
+                "DeviceBindings",
+                "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceBindings_PatientId",
-                table: "DeviceBindings",
-                column: "PatientId");
+                "IX_DeviceBindings_PatientId",
+                "DeviceBindings",
+                "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Devices_CurrentBindingId",
-                table: "Devices",
-                column: "CurrentBindingId",
+                "IX_Devices_CurrentBindingId",
+                "Devices",
+                "CurrentBindingId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Devices_SerialNumber",
-                table: "Devices",
-                column: "SerialNumber",
+                "IX_Devices_SerialNumber",
+                "Devices",
+                "SerialNumber",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Patients_CurrentBindingId",
-                table: "Patients",
-                column: "CurrentBindingId",
+                "IX_Patients_CurrentBindingId",
+                "Patients",
+                "CurrentBindingId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Patients_Email",
-                table: "Patients",
-                column: "Email",
+                "IX_Patients_Email",
+                "Patients",
+                "Email",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Devices_DeviceBindings_CurrentBindingId",
-                table: "Devices",
-                column: "CurrentBindingId",
-                principalTable: "DeviceBindings",
+                "FK_Devices_DeviceBindings_CurrentBindingId",
+                "Devices",
+                "CurrentBindingId",
+                "DeviceBindings",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Patients_DeviceBindings_CurrentBindingId",
-                table: "Patients",
-                column: "CurrentBindingId",
-                principalTable: "DeviceBindings",
+                "FK_Patients_DeviceBindings_CurrentBindingId",
+                "Patients",
+                "CurrentBindingId",
+                "DeviceBindings",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
@@ -117,21 +111,21 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_DeviceBindings_Devices_DeviceId",
-                table: "DeviceBindings");
+                "FK_DeviceBindings_Devices_DeviceId",
+                "DeviceBindings");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_DeviceBindings_Patients_PatientId",
-                table: "DeviceBindings");
+                "FK_DeviceBindings_Patients_PatientId",
+                "DeviceBindings");
 
             migrationBuilder.DropTable(
-                name: "Devices");
+                "Devices");
 
             migrationBuilder.DropTable(
-                name: "Patients");
+                "Patients");
 
             migrationBuilder.DropTable(
-                name: "DeviceBindings");
+                "DeviceBindings");
         }
     }
 }

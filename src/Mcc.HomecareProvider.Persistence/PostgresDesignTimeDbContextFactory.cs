@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace Mcc.HomecareProvider.Persistence
 {
     /// <summary>
-    /// This class is to allow running powershell EF commands from the project folder without
-    /// specifying Startup class (without triggering the whole startup during EF operations
-    /// like add/remove migrations).
+    ///     This class is to allow running powershell EF commands from the project folder without
+    ///     specifying Startup class (without triggering the whole startup during EF operations
+    ///     like add/remove migrations).
     /// </summary>
     public class PostgresDesignTimeDbContextFactory
         : IDesignTimeDbContextFactory<PostgresDbContext>

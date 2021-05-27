@@ -16,11 +16,11 @@ namespace Mcc.HomecareProvider.App.Middleware
     /// </summary>
     public class ErrorHandlerMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger _logger;
+        private static readonly RouteData _emptyRouteData = new();
+        private static readonly ActionDescriptor _emptyAction = new();
         private readonly IWebHostEnvironment _env;
-        private static readonly RouteData _emptyRouteData = new RouteData();
-        private static readonly ActionDescriptor _emptyAction = new ActionDescriptor();
+        private readonly ILogger _logger;
+        private readonly RequestDelegate _next;
 
         public ErrorHandlerMiddleware(
             RequestDelegate next,
@@ -50,7 +50,7 @@ namespace Mcc.HomecareProvider.App.Middleware
 
         private static async Task ExecuteResult(HttpContext httpContext, IActionResult result)
         {
-            RouteData routeData = httpContext.GetRouteData() ?? _emptyRouteData;
+            var routeData = httpContext.GetRouteData() ?? _emptyRouteData;
             var actionContext = new ActionContext(httpContext, routeData, _emptyAction);
             await result.ExecuteResultAsync(actionContext);
         }
@@ -58,7 +58,7 @@ namespace Mcc.HomecareProvider.App.Middleware
         private async Task ProcessException(HttpContext httpContext, Exception ex)
         {
             _logger.LogError($"An unhandled exception has occurred: {ex}");
-            string detail = _env.IsProduction() ? null : ex.ToString();
+            var detail = _env.IsProduction() ? null : ex.ToString();
             var details = new ProblemDetails
             {
                 Type = ErrorTypes.InternalServerError,
@@ -68,7 +68,7 @@ namespace Mcc.HomecareProvider.App.Middleware
 
             var result = new ObjectResult(details)
             {
-                StatusCode = StatusCodes.Status500InternalServerError,
+                StatusCode = StatusCodes.Status500InternalServerError
             };
 
             await ExecuteResult(httpContext, result);

@@ -36,8 +36,8 @@ namespace Mcc.HomecareProvider.Domain
             CurrentBinding = binding;
             DeviceBindings.Add(binding);
             patient.BindDevice(CurrentBinding, currentTime);
-            
-            
+
+
             //bug 
             patient.DateOfBirth = DateTime.Now;
 

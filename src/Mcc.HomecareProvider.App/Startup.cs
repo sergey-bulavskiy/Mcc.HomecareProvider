@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -34,7 +33,7 @@ namespace Mcc.HomecareProvider
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
-            
+
             services.AddControllers()
                 .AddNewtonsoftJson(
                     setupAction =>
@@ -44,7 +43,7 @@ namespace Mcc.HomecareProvider
                         setupAction.SerializerSettings.ContractResolver =
                             new CamelCasePropertyNamesContractResolver();
                     });
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Mcc.HomecareProvider", Version = "v1"});
@@ -61,7 +60,7 @@ namespace Mcc.HomecareProvider
                 .AddSingleton<Func<PostgresDbContext>>(
                     provider => () => new PostgresDbContext(
                         provider.GetRequiredService<DbContextOptions<PostgresDbContext>>()));
-            
+
             services.AddScoped<PostgresDbContext>();
             services.AddScoped<DateTimeProvider>();
             services.AddScoped<DevicesService>();
@@ -72,10 +71,7 @@ namespace Mcc.HomecareProvider
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mcc.HomecareProvider v1"));
@@ -83,8 +79,8 @@ namespace Mcc.HomecareProvider
 
             app.UseAuthorization();
             app.UseMiddleware<ErrorHandlerMiddleware>();
-            
-            IServiceProvider container = app.ApplicationServices;
+
+            var container = app.ApplicationServices;
             //RunMigration(container);
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
@@ -92,9 +88,9 @@ namespace Mcc.HomecareProvider
 
         private void RunMigration(IServiceProvider container)
         {
-            using IServiceScope scope = container.CreateScope();
+            using var scope = container.CreateScope();
             var dbContextFactory = container.GetRequiredService<Func<PostgresDbContext>>();
-            using PostgresDbContext context = dbContextFactory();
+            using var context = dbContextFactory();
             context.Database.Migrate();
         }
     }

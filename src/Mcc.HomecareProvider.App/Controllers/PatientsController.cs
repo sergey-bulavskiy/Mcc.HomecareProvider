@@ -10,11 +10,12 @@ namespace Mcc.HomecareProvider.App.Controllers
     public class PatientsController : ControllerBase
     {
         private readonly PatientService _patientService;
+
         public PatientsController(PatientService patientService)
         {
             _patientService = patientService;
         }
-        
+
         [HttpPost]
         public Task<Guid> CreatePatient([FromBody] CreatePatientDto createPatientDto)
         {

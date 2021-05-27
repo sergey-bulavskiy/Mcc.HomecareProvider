@@ -31,10 +31,7 @@ namespace Mcc.HomecareProvider.App.Services
             await _dbContext.SaveChangesAsync();
 
             // bug
-            if (!serialNumber.StartsWith("12"))
-            {
-                device.InitializeCurrentDeviceBinding();
-            }
+            if (!serialNumber.StartsWith("12")) device.InitializeCurrentDeviceBinding();
 
             await _dbContext.SaveChangesAsync();
             return device.Id;

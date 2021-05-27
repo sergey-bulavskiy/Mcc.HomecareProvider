@@ -8,7 +8,7 @@ namespace Mcc.HomecareProvider.App.Controllers
     public class VersionController
     {
         /// <summary>
-        /// Gets the version of the service.
+        ///     Gets the version of the service.
         /// </summary>
         /// <returns>A string representing the version.</returns>
         [AllowAnonymous]
