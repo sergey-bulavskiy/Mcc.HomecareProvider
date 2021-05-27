@@ -41,7 +41,7 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     LastName = table.Column<string>(type: "text", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    CurrentBindingId = table.Column<Guid>(type: "uuid", nullable: false)
+                    CurrentBindingId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,7 +55,7 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PatientId = table.Column<Guid>(type: "uuid", nullable: true),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AssignedToPatientAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    AssignedToPatientAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

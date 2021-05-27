@@ -46,7 +46,7 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("AssignedToPatientAt")
+                    b.Property<DateTimeOffset?>("AssignedToPatientAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("DeviceId")
@@ -72,7 +72,7 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CurrentBindingId")
+                    b.Property<Guid?>("CurrentBindingId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateOfBirth")

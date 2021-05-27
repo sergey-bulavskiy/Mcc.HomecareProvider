@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mcc.HomecareProvider.Persistence.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20210527033236_InitialMigration")]
+    [Migration("20210527041337_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,7 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("AssignedToPatientAt")
+                    b.Property<DateTimeOffset?>("AssignedToPatientAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("DeviceId")
@@ -74,7 +74,7 @@ namespace Mcc.HomecareProvider.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CurrentBindingId")
+                    b.Property<Guid?>("CurrentBindingId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateOfBirth")

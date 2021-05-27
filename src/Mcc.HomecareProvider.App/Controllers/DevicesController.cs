@@ -17,10 +17,9 @@ namespace Mcc.HomecareProvider.App.Controllers
         }
 
         [HttpPost]
-        public Task<Guid> CreateDevice([FromQuery] string serialNumber)
+        public Task<Guid> CreateDevice([FromBody] string serialNumber)
         {
             return _devicesService.CreateDevice(serialNumber);
         }
-        
     }
 }

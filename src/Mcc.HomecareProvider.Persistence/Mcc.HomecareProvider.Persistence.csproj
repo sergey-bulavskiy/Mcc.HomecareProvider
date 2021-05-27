@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Mcc.HomecareProvider.Domain\Mcc.HomecareProvider.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations" />
+  </ItemGroup>
+
 </Project>

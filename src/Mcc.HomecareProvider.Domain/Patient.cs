@@ -32,7 +32,7 @@ namespace Mcc.HomecareProvider.Domain
         public List<DeviceBinding> DeviceBindings { get; set; }
 
         public DeviceBinding CurrentBinding { get; set; }
-        public Guid CurrentBindingId { get; set; }
+        public Guid? CurrentBindingId { get; set; }
 
         public bool HasDevice()
         {

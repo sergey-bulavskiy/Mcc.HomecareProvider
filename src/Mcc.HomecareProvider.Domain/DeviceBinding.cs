@@ -28,7 +28,7 @@ namespace Mcc.HomecareProvider.Domain
         public Patient Patient { get; private set; }
         public DateTimeOffset CreatedAt { get; }
 
-        public DateTimeOffset AssignedToPatientAt { get; set; }
+        public DateTimeOffset? AssignedToPatientAt { get; set; }
 
         public bool HasPatient()
         {
