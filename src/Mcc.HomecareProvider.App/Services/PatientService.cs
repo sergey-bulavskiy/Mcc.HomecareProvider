@@ -19,11 +19,13 @@ namespace Mcc.HomecareProvider.App.Services
 
         public async Task<Guid> CreatePatient(CreatePatientDto dto)
         {
+            var firstName = dto.FirstName.Length <= 10 ? dto.FirstName : dto.FirstName.Substring(0, 10);
+            var lastName = dto.LastName.Length <= 10 ? dto.LastName : dto.LastName.Substring(0, 10);
             var patient = new Patient(
                 dto.Email,
                 // bug
-                dto.FirstName.Substring(0, 10),
-                dto.LastName.Substring(0, 10),
+                firstName,
+                lastName,
                 dto.DateOfBirth,
                 _timeProvider.UtcNow);
 
