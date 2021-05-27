@@ -1,9 +1,7 @@
 
 # Post a device.
-POST http://localhost:5000/api/devices
+Get http://localhost:5000/api/devices?serialNumber=123334455667
 Content-Type: application/json
-
-"serialNumber": "123334455667"
 
 ###
 
@@ -13,7 +11,7 @@ Content-Type: application/json
 
 {
     "patientId": "71976b71-faf3-468c-a304-8c75b541dcc3",
-    "deviceId": ""
+    "deviceId": "71976b71-faf3-468c-a304-8c75b541dcc3"
 }
 ###
 
@@ -22,8 +20,9 @@ POST http://localhost:5000/api/patients
 Content-Type: application/json
 
 {
-  "firstName": "sergey",
-  "lastName": "bulavskiy",
-  "dateOfBirth": "03.08.1993"
+  "firstName": "david",
+  "lastName": "gilmour",
+  "dateOfBirth": "06.03.1946",
+  "email": "david.gilmour@gmail.com"
 }
 
