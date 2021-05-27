@@ -39,15 +39,7 @@ namespace Mcc.HomecareProvider.Domain
 
         public bool HasDevice()
         {
-            EnsurePropertyLoaded(nameof(CurrentBinding), CurrentBinding);
-            return CurrentBinding.Device != null;
-        }
-
-        private static void EnsurePropertyLoaded(string propertyName, object value)
-        {
-            if (value is null)
-                throw new ApplicationException(
-                    $"{propertyName} is null. Did you forget to Include(x => x.{propertyName})?");
+            return CurrentBinding?.Device != null;
         }
     }
 }

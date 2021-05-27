@@ -67,6 +67,7 @@ namespace Mcc.HomecareProvider
             services.AddScoped<DateTimeProvider>();
             services.AddScoped<DevicesService>();
             services.AddScoped<PatientService>();
+            services.AddScoped<DbInitializer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -85,7 +86,7 @@ namespace Mcc.HomecareProvider
             app.UseMiddleware<ErrorHandlerMiddleware>();
             
             IServiceProvider container = app.ApplicationServices;
-            RunMigration(container);
+            //RunMigration(container);
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

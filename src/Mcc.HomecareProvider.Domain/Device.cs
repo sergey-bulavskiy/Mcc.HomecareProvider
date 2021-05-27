@@ -23,7 +23,7 @@ namespace Mcc.HomecareProvider.Domain
         public List<DeviceBinding> DeviceBindings { get; }
         public DeviceBinding CurrentBinding { get; private set; }
 
-        public bool IsAssignedToDevice => CurrentBinding.HasPatient();
+        public bool IsAssignedToPatient => CurrentBinding.HasPatient();
         public Guid? CurrentBindingId { get; private set; }
 
         public DeviceBinding AssignToPatient(Patient patient, DateTimeOffset currentTime)
@@ -37,7 +37,7 @@ namespace Mcc.HomecareProvider.Domain
                     $"Patient with Id: {patient.Id} already assigned to a device");
 
             EnsurePropertyLoaded(nameof(CurrentBinding), CurrentBinding);
-            if (IsAssignedToDevice) CurrentBinding.InitializeWithPatient(patient, currentTime);
+            if (!IsAssignedToPatient) CurrentBinding.InitializeWithPatient(patient, currentTime);
 
             return CurrentBinding;
         }
