@@ -202,7 +202,7 @@ namespace Mcc.HomecareProvider.App
                 var patient = patients[i];
                 patient.Email = $"ShouldEndUpInOutput{i}@gmail.com";
 
-                for (var k = 0; k < i; k++)
+                for (var k = 0; k <= i; k++)
                 {
                     var device = devices[k];
                     device.AssignToPatient(patient, DateTimeOffset.Now);
