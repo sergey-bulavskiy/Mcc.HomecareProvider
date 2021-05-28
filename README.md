@@ -35,7 +35,8 @@ Device Binding represents the fact that at a specific period of time a device, w
 
 ### PG Clients:
 - free pg db client - https://www.pgadmin.org/
-- other db client (paid but with trial) - https://www.jetbrains.com/datagrip/
+- another universal free db client - https://dbeaver.io
+- another universal db client (paid but with trial) - https://www.jetbrains.com/datagrip/
 
 ### API clients: 
 - Postman - https://www.postman.com/
