@@ -13,7 +13,7 @@ trigger:
 variables:
   BUILD_NUMBER: 0.1.$(Build.BuildId)
   DOCTL_URL: https://github.com/digitalocean/doctl/releases/download/v1.60.0/doctl-1.60.0-linux-amd64.tar.gz
-  DOCTL_DEPLOY_APP_ID: df52fed6-95de-4f03-9a22-f31924e0ecbc
+  DOCTL_DEPLOY_APP_ID: 2bb3571b-9b99-4b77-917d-c924f4c9ffef
 
 pool:
   vmImage: ubuntu-latest
