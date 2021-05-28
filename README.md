@@ -26,6 +26,7 @@ Device Binding represents the fact that at a specific period of time a device, w
 
 
 ## SQL Tasks: 
+(Each task is be solved by one SQL script, and this SQL script should be the answer to the tasks.)
 1. Find patient (specify first/last names) that had the most devices for the whole period of existence.
 2. Find what serial number of the device that was assigned to the patient with email "jimi.hendrix@gmail.com" at 7th of May, 2005 year.
 
