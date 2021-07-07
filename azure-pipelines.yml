@@ -76,7 +76,7 @@ stages:
             inputs:
               repository: $(DOCKER_REGISTRY)
               command: 'buildAndPush'
-              Dockerfile: 'publish/Dockerfile'
+              Dockerfile: './Dockerfile'
               buildContext: '$(Build.SourcesDirectory)/publish'
               tags: |
                 $(BUILD_NUMBER)
@@ -88,7 +88,7 @@ stages:
             inputs:
               repository: $(DOCKER_REGISTRY)
               command: 'buildAndPush'
-              Dockerfile: 'publish/Dockerfile'
+              Dockerfile: './Dockerfile'
               buildContext: '$(Build.SourcesDirectory)/publish'
               tags: |
                 $(BUILD_NUMBER)
