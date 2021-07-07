@@ -10,6 +10,7 @@ trigger:
     exclude:
     - README.md
 
+
 variables:
   BUILD_NUMBER: 0.1.$(Build.BuildId)
   DOCTL_URL: https://github.com/digitalocean/doctl/releases/download/v1.60.0/doctl-1.60.0-linux-amd64.tar.gz
