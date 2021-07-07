@@ -1,85 +1,224 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
 trigger:
-  branches:
-    include:
-    - main
-  paths:
-    exclude:
-    - README.md
-
+  - main
 
 variables:
   BUILD_NUMBER: 0.1.$(Build.BuildId)
   DOCTL_URL: https://github.com/digitalocean/doctl/releases/download/v1.60.0/doctl-1.60.0-linux-amd64.tar.gz
-  DOCTL_DEPLOY_APP_ID: 2bb3571b-9b99-4b77-917d-c924f4c9ffef
+  DOCKER_REGISTRY: 'registry.gitlab.com/mcc.test/mcc.test'
+  DOCKER_USER: 'mcc.test'
 
-pool:
-  vmImage: ubuntu-latest
+stages:
+  - stage: Build
+    jobs:
+      - job:
+        pool:
+          vmImage: ubuntu-latest
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '14.x'
-  displayName: 'Install Node.js'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '14.x'
+            displayName: 'Install Node.js'
 
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '5.x'
+          - task: UseDotNet@2
+            inputs:
+              packageType: 'sdk'
+              version: '5.x'
 
-- script: |
-    yarn config set network-timeout 300000 -g
-  displayName: 'increase yarn install timeout'
+          - script: |
+              yarn config set network-timeout 300000 -g
+            displayName: 'increase yarn install timeout'
 
-- task: Cache@2
-  inputs:
-    key: 'node_modules|root|$(Agent.OS)|./yarn.lock'
-    path: $(Build.SourcesDirectory)/node_modules
-    cacheHitVar: YARN_CACHE_RESTORED
-  displayName: Cache npm packages
-  continueOnError: true
-  
-- script: |
-    yarn --frozen-lockfile
-  displayName: 'yarn install'
+          - task: Cache@2
+            inputs:
+              key: 'node_modules|root|$(Agent.OS)|./yarn.lock'
+              path: $(Build.SourcesDirectory)/node_modules
+              cacheHitVar: YARN_CACHE_RESTORED
+            displayName: Cache npm packages
+            continueOnError: true
 
-- script: |
-    dotnet restore
-  displayName: 'dotnet restore'
+          - script: |
+              yarn --frozen-lockfile
+            displayName: 'yarn install'
 
-- script: |
-    npm --no-git-tag-version version $(BUILD_NUMBER) --allow-same-version
-  displayName: 'set version'
+          - script: |
+              cd webapi
+              dotnet restore
+            displayName: 'dotnet restore'
 
-- script: |
-    yarn build
-  displayName: 'build'
+          - script: |
+              npm --no-git-tag-version version $(BUILD_NUMBER) --allow-same-version
+            displayName: 'set version'
 
-- script: |
-    wget $(DOCTL_URL)
-    tar xf ./doctl-1.60.0-linux-amd64.tar.gz
-  displayName: 'Download Digital Ocean Control binary'
-    
-- script: |
-    ./doctl auth init -t $(DOCTL_TOKEN)
-    ./doctl registry login --expiry-seconds 600
-  displayName: 'Authenticate at Digital Ocean'  
-  
-- task: Docker@2
-  condition: succeeded()
-  inputs:
-    repository: 'registry.digitalocean.com/test-mcc-registry/homecareprovider'
-    command: 'buildAndPush'
-    Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-    buildContext: '$(Build.SourcesDirectory)/publish'
-    tags: |
-      $(BUILD_NUMBER)
-      latest
-  displayName: 'build and push version+latest'
+          - script: |
+              yarn build
+            displayName: 'build'
 
-- script: |
-    ./doctl apps create-deployment $(DOCTL_DEPLOY_APP_ID)
-  displayName: 'Deploy to Digital Ocean'
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/junit.xml'
+              mergeTestResults: true
+
+          #- task: PublishCodeCoverageResults@1
+          #  displayName: 'Publish code coverage from Jest tests'
+          #  inputs:
+          #    codeCoverageTool: Cobertura
+          #    summaryFileLocation: '**/cobertura-coverage.xml'
+          #    failIfCoverageEmpty: true
+
+          - script: |
+              docker login $(DOCKER_REGISTRY) -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
+            displayName: 'Authenticate at Container Registry'
+
+          - task: Docker@2
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              repository: $(DOCKER_REGISTRY)
+              command: 'buildAndPush'
+              Dockerfile: 'publish/Dockerfile'
+              buildContext: '$(Build.SourcesDirectory)/publish'
+              tags: |
+                $(BUILD_NUMBER)
+                latest
+            displayName: 'build and push version+latest'
+
+          - task: Docker@2
+            condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+            inputs:
+              repository: $(DOCKER_REGISTRY)
+              command: 'buildAndPush'
+              Dockerfile: 'publish/Dockerfile'
+              buildContext: '$(Build.SourcesDirectory)/publish'
+              tags: |
+                $(BUILD_NUMBER)
+            displayName: 'build and push version only'
+
+          - publish: './docker-compose.yaml'
+            artifact: 'docker-compose'
+
+          - publish: './nginx'
+            artifact: 'nginx'
+
+          - publish: './scripts/deploy'
+            artifact: 'scripts'
+
+  - stage: DeployToDev
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment:
+        environment:
+          name: 'DEV'
+          resourceType: VirtualMachine
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    echo $(BUILD_NUMBER) > /tmp/templateapp_build
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    path: './'
+
+                - script: |
+                    sudo rm $HOME/docker-compose.yaml -rf
+                    sudo rm $HOME/nginx -rf
+                    cp ./docker-compose/* $HOME -f -r
+                    cp ./nginx/ $HOME/nginx/ -f -r
+                  displayName: copy artifacts to HOME dir
+
+                - script: cp $HOME/.env.base $HOME/.env -f
+                  displayName: copy .env.base -> .env
+
+                - script: |
+                    echo 'IMAGE_URL=$(DOCKER_REGISTRY):$(BUILD_NUMBER)' >> $HOME/.env;
+                  displayName: Put custom variables into into .env
+
+                - script: |
+                    sudo docker login $(DOCKER_REGISTRY) -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
+                  displayName: 'Authenticate at Container Registry'
+
+                - script: cd $HOME; sudo docker-compose up -d
+                  displayName: run docker-compose
+
+                - script: |
+                    chmod +x ./scripts/wait-for-http.sh
+                    export $(cat $HOME/.env | xargs) && ./scripts/wait-for-http.sh https://$VIRTUAL_HOST/api/ -t 120
+                  displayName: waiting for web server to be up and running
+
+  - stage: TagDevSources
+    dependsOn: DeployToDev
+    condition: succeeded()
+    jobs:
+      - job:
+        condition: succeeded()
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            persistCredentials: true
+          - script: |
+              git tag 'dev' -f
+              git push origin 'dev' -f --tags
+
+  - stage: DeployToProd
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment:
+        environment:
+          name: 'PROD'
+          resourceType: VirtualMachine
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    echo $(BUILD_NUMBER) > /tmp/templateapp_build_prod
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    path: './'
+
+                - script: |
+                    sudo rm $HOME/docker-compose.yaml -rf
+                    sudo rm $HOME/nginx -rf
+                    cp ./docker-compose/* $HOME -f -r
+                    cp ./nginx/ $HOME/nginx/ -f -r
+                  displayName: copy artifacts to HOME dir
+
+                - script: cp $HOME/.env.base $HOME/.env -f
+                  displayName: copy .env.base -> .env
+
+                - script: |
+                    echo 'IMAGE_URL=$(DOCKER_REGISTRY):$(BUILD_NUMBER)' >> $HOME/.env;
+                  displayName: Put custom variables into into .env
+
+                - script: |
+                    sudo docker login $(DOCKER_REGISTRY) -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
+                  displayName: 'Authenticate at Container Registry'
+
+                - script: cd $HOME; sudo docker-compose up -d
+                  displayName: run docker-compose
+
+                - script: |
+                    chmod +x ./scripts/wait-for-http.sh
+                    export $(cat $HOME/.env | xargs) && ./scripts/wait-for-http.sh https://$VIRTUAL_HOST/api/ -t 120
+                  displayName: waiting for web server to be up and running
+
+  - stage: TagProdSources
+    dependsOn: DeployToProd
+    condition: succeeded()
+    jobs:
+      - job:
+        condition: succeeded()
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            persistCredentials: true
+          - script: |
+              git tag 'prod' -f
+              git push origin 'prod' -f --tags
