@@ -116,7 +116,7 @@ stages:
             deploy:
               steps:
                 - script: |
-                    echo $(BUILD_NUMBER) > /tmp/templateapp_build
+                    echo $(BUILD_NUMBER) > /tmp/homecareprovider_build
 
                 - task: DownloadPipelineArtifact@2
                   inputs:
@@ -176,7 +176,7 @@ stages:
             deploy:
               steps:
                 - script: |
-                    echo $(BUILD_NUMBER) > /tmp/templateapp_build_prod
+                    echo $(BUILD_NUMBER) > /tmp/homecareprovider_build_prod
 
                 - task: DownloadPipelineArtifact@2
                   inputs:
