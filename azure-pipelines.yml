@@ -140,8 +140,12 @@ stages:
                     sudo docker login $(DOCKER_REGISTRY) -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
                   displayName: 'Authenticate at Container Registry'
 
-                - script: cd $HOME; sudo docker-compose up -d
+                - script: |
+                    cd $HOME
+                    sudo docker network create load-balancer
+                    sudo docker-compose up -d
                   displayName: run docker-compose
+
 
                 - script: |
                     chmod +x ./scripts/wait-for-http.sh
@@ -200,7 +204,10 @@ stages:
                     sudo docker login $(DOCKER_REGISTRY) -u $(DOCKER_USER) -p $(DOCKER_TOKEN)
                   displayName: 'Authenticate at Container Registry'
 
-                - script: cd $HOME; sudo docker-compose up -d
+                - script: |
+                    cd $HOME
+                    sudo docker network create load-balancer
+                    sudo docker-compose up -d
                   displayName: run docker-compose
 
                 - script: |

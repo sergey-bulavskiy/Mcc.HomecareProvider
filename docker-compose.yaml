@@ -5,55 +5,68 @@ services:
     image: postgres:11.12
     container_name: postgres
     restart: always
+    networks:
+      - internal
     environment:
       - POSTGRES_PASSWORD=${POSTGRESS_PASSWORD}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
     - postgres_data:/var/lib/postgresql/data
+
   web:
     image: "${IMAGE_URL}"
     container_name: web
     restart: always
+    networks:
+      - internal
+      - load-balancer
     depends_on:
-      - "acme"
       - "postgres"
     environment:
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - LETSENCRYPT_HOST=${VIRTUAL_HOST}
       - LETSENCRYPT_EMAIL=${EMAIL}
-      - ConnectionStrings__DefaultConnection=Server=postgres;Database=postgres;Port=${POSTGRES_PORT:-5432};Username=postgres;Password=${POSTGRESS_PASSWORD};Pooling=true;Keepalive=5;Command Timeout=60;Trust Server Certificate=true
+      - ConnectionStrings__DefaultConnection=Server=postgres;Database=postgres;Port=5432;Username=postgres;Password=${POSTGRESS_PASSWORD};Pooling=true;Keepalive=5;Command Timeout=60;Trust Server Certificate=true
 
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy
-    container_name: nginx-proxy
-    restart: always
-    ports:
-      - "${HTTP_PORT:-80}:80"
-      - "${HTTPS_PORT:-443}:443"
-    volumes:
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - certs:/etc/nginx/certs:ro
-      - ./nginx/conf.d/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
-      - ./nginx/conf.d/compression.conf:/etc/nginx/conf.d/compression.conf:ro
-      - ./nginx/vhost.d/default_location:/etc/nginx/vhost.d/default_location:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-  acme:
-    image: nginxproxy/acme-companion
-    container_name: acme
-    restart: always
-    depends_on:
-      - "nginx-proxy"
-    volumes:
-      - acme:/etc/acme.sh:rw
-      - vhost:/etc/nginx/vhost.d:rw
-      - html:/usr/share/nginx/html:rw
-      - certs:/etc/nginx/certs:rw
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - DEFAULT_EMAIL=${EMAIL}
-      - NGINX_PROXY_CONTAINER=nginx-proxy
+#  nginx-proxy:
+#    image: nginxproxy/nginx-proxy
+#    container_name: nginx-proxy
+#    restart: always
+#    networks:
+#      - load-balancer
+#    ports:
+#      - "${HTTP_PORT:-80}:80"
+#      - "${HTTPS_PORT:-443}:443"
+#    volumes:
+#      - vhost:/etc/nginx/vhost.d
+#      - html:/usr/share/nginx/html
+#      - certs:/etc/nginx/certs:ro
+#      - ./nginx/conf.d/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
+#      - ./nginx/conf.d/compression.conf:/etc/nginx/conf.d/compression.conf:ro
+#      - ./nginx/vhost.d/default_location:/etc/nginx/vhost.d/default_location:ro
+#      - /var/run/docker.sock:/tmp/docker.sock:ro
+#  acme:
+#    image: nginxproxy/acme-companion
+#    container_name: acme
+#    restart: always
+#    depends_on:
+#      - "nginx-proxy"
+#    volumes:
+#      - acme:/etc/acme.sh:rw
+#      - vhost:/etc/nginx/vhost.d:rw
+#      - html:/usr/share/nginx/html:rw
+#      - certs:/etc/nginx/certs:rw
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#    environment:
+#      - DEFAULT_EMAIL=${EMAIL}
+#      - NGINX_PROXY_CONTAINER=nginx-proxy
+
+networks:
+  load-balancer:
+    external: true
+  internal:
+
 volumes:
   acme:
   vhost:
