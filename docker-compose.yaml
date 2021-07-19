@@ -3,7 +3,7 @@ version: '3.6'
 services:
   postgres:
     image: postgres:11.12
-    container_name: postgres
+    container_name: postgres_qa
     restart: always
     networks:
       - internal
@@ -16,7 +16,7 @@ services:
 
   web:
     image: "${IMAGE_URL}"
-    container_name: web
+    container_name: web_qa
     restart: always
     networks:
       - internal
