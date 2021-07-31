@@ -109,7 +109,7 @@ stages:
     jobs:
       - deployment:
         environment:
-          name: 'DEV'
+          name: 'QA'
           resourceType: VirtualMachine
         strategy:
           runOnce:
@@ -173,7 +173,7 @@ stages:
     jobs:
       - deployment:
         environment:
-          name: 'PROD'
+          name: 'QA_PROD'
           resourceType: VirtualMachine
         strategy:
           runOnce:
