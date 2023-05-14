@@ -46,7 +46,7 @@ spec:
                 name: testqa-configmap
                 optional: true
           ports:
-            - containerPort: 5000
+            - containerPort: 80
           volumeMounts:
             - mountPath: '/files'
               name: files-volume
@@ -59,7 +59,7 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: 5000
+      targetPort: 80
   selector:
     app: testqa-main-api
 
