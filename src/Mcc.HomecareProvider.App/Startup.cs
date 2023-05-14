@@ -53,8 +53,6 @@ namespace Mcc.HomecareProvider
             });
 
             var dbString = Configuration.GetConnectionString("DefaultConnection");
-            Console.WriteLine($"Connection string: '{dbString}'");
-            
             services
                 .AddDbContext<PostgresDbContext>(
                     opt => opt.UseNpgsql(dbString),
