@@ -1,0 +1,76 @@
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: testqa-main-postgres-pv
+#   namespace: testqa
+#   labels:
+#     type: local
+# spec:
+#   storageClassName: manual
+#   capacity:
+#     storage: 3Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   hostPath:
+#     path: /home/k3s-volume
+# ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: testqa
+  name: postgres-volume-pvc
+spec:
+  # storageClassName: manual
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testqa-main-postgres
+  namespace: testqa
+  labels:
+    app: testqa-main-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: testqa-main-postgres
+  template:
+    metadata:
+      labels:
+        app: testqa-main-postgres
+    spec:
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-volume-pvc
+      containers:
+        - name: testqa-main-postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: testqa-configmap-secret
+          volumeMounts:
+            - mountPath: '/var/lib/postgresql/data'
+              name: postgres-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: testqa
+spec:
+  type: LoadBalancer
+  ports:
+    - name: 'testqa-main-postgres'
+      port: 5434
+      targetPort: 5432
+  selector:
+    app: testqa-main-postgres

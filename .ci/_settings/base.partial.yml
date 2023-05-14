@@ -1,0 +1,34 @@
+# ------------------------------------
+# This is the base file that is used in all pipelines
+# Please, DO NOT CHANGE it
+# Change 'base.partial.yml' instead
+# ------------------------------------
+variables:
+  DUMMY: 1
+
+  # # General
+  # DISABLE_BUILD: false
+  # DISABLE_TESTS: false
+  # # -----------
+
+  # # Storybook
+  # ENABLE_STORYBOOK: true
+  # RUN_STORYBOOK_TESTS_AFTER_BUILD: false
+  # RUN_STORYBOOK_TESTS_PARALLEL_BUILD: true
+  # # -----------
+
+  # # e2e
+  # ENABLE_E2E_DOCKER: true
+  # ENABLE_E2E_STAGE: false
+  # DEPLOY_IF_E2E_FAILS: false
+  # e2e_test_shards: 2
+  # sb_test_shards: 2
+  # # -----------
+
+  # # Deployment
+  # DOCKER_TAG: latest
+  # ENABLE_DEPLOY: true
+  # TAG_SOURCES_DEV: dev
+  # TAG_SOURCES_PROD: prod
+  # DEPLOY_IF_STORYBOOK_FAILS: false
+  # # -----------

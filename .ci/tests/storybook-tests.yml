@@ -1,0 +1,45 @@
+steps:
+  - checkout: self
+    fetchDepth: 1
+    submodules: true
+
+  - template: ../steps/cache-node-modules.yml
+    parameters:
+      ENABLE_STORYBOOK: true
+
+  # - task: DownloadPipelineArtifact@2
+  #   inputs:
+  #     artifact: 'storybook'
+  #     path: './frontend/storybook-static'
+
+  - script: |
+      yarn build-storybook
+    workingDirectory: frontend
+    displayName: 'build storybook'
+
+  - script: npx playwright install
+    workingDirectory: e2e
+    displayName: 'npx playwright install'
+
+  - script: |
+      env
+      RUN_STORYBOOK_SERVER=1 yarn test-storybook --shard ${SYSTEM_JOBPOSITIONINPHASE}/${SYSTEM_TOTALJOBSINPHASE}
+    workingDirectory: e2e
+    displayName: 'run tests'
+
+  - script: |
+      mkdir -p test-results
+    workingDirectory: e2e
+    displayName: 'mkdir -p test-results'
+
+  - task: PublishTestResults@2
+    condition: always()
+    displayName: 'publish test results'
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/junit.xml'
+      mergeTestResults: false
+
+  - publish: $(Build.SourcesDirectory)/e2e/test-results
+    condition: always()
+    artifact: 'test-results$(System.JobPositionInPhase)_$(System.JobAttempt)'

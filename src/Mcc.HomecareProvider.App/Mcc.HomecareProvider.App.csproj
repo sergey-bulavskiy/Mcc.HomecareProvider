@@ -30,4 +30,10 @@
     <ProjectReference Include="..\Mcc.HomecareProvider.Persistence\Mcc.HomecareProvider.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\azure-pipelines.yml">
+      <Link>azure-pipelines.yml</Link>
+    </Content>
+  </ItemGroup>
+
 </Project>

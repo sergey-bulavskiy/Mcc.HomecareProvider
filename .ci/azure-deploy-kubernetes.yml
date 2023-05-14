@@ -1,0 +1,44 @@
+parameters:
+  - name: kubeconfig
+    type: string
+  - name: stage
+    type: string
+
+steps:
+  - checkout: self
+
+  - task: KubectlInstaller@0
+    displayName: Install kubectl
+
+  - task: DownloadSecureFile@1
+    name: kubeconfig
+    inputs:
+      secureFile: ${{ parameters.kubeconfig }}
+
+  - script: |
+      export KUBECONFIG=$(kubeconfig.secureFilePath)
+      cat ./.ci/_stages/${{ parameters.kubeconfig }}.env
+
+      echo "##vso[task.setvariable variable=KUBECONFIG]$(kubeconfig.secureFilePath)"
+    displayName: export env. variables and kubeconfig
+
+  - script: |
+      (kubectl -n testqa create secret docker-registry docker-registry-secret --docker-server=$(DOCKER_REGISTRY) --docker-username=$(DOCKER_USER) --docker-password=$(DOCKER_TOKEN) -o yaml --dry-run=client | kubectl replace -f -)
+    displayName: create docker secrets
+
+  - script: |
+      kubectl apply -f k8s/postgres.yaml
+    displayName: deploy postgres
+
+  - script: |
+      (kubectl -n testqa create configmap testqa-configmap --from-env-file=./.ci/_stages/${{ parameters.stage }}.env -o yaml --dry-run=client | kubectl replace -f -)
+    displayName: apply env variables from ${{ parameters.stage }}.env
+
+  - script: |
+      export DOCKER_IMAGE="$(DOCKER_REGISTRY):$(BUILD_NUMBER)";
+      export $(cat ./.ci/_stages/${{ parameters.stage }}.env | xargs)
+
+      envsubst < k8s/app.yaml > k8s/app.yaml.tmp && mv k8s/app.yaml.tmp k8s/app.yaml
+      cat k8s/app.yaml
+      kubectl apply -f k8s/app.yaml
+    displayName: deploy app
