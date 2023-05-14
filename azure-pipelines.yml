@@ -106,8 +106,8 @@ stages:
     dependsOn:
       - Build
     variables:
-      - template: ./_stages/_default.yml
-      - template: ./_stages/dev.yml
+      - template: ./.ci/_stages/_default.yml
+      - template: ./.ci/_stages/dev.yml
     condition: succeeded()
     jobs:
       - deployment:
