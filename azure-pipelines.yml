@@ -110,31 +110,11 @@ stages:
       - template: ./.ci/_stages/dev.yml
     condition: succeeded()
     jobs:
-      - deployment:
-        environment:
-          name: 'QA'
-          resourceType: VirtualMachine
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - template: ./.ci/azure-deploy-kubernetes.yml
-                  parameters:
-                    kubeconfig: ${{ variables.KUBECONFIG }}
-                    stage: 'dev'
-
-
-  - stage: TagDevSources
-    dependsOn: DeployToDev
-    condition: succeeded()
-    jobs:
       - job:
-        condition: succeeded()
         pool:
           vmImage: ubuntu-latest
         steps:
-          - checkout: self
-            persistCredentials: true
-          - script: |
-              git tag 'dev' -f
-              git push origin 'dev' -f --tags
+          - template: ./.ci/azure-deploy-kubernetes.yml
+            parameters:
+              kubeconfig: ${{ variables.KUBECONFIG }}
+              stage: 'dev'
