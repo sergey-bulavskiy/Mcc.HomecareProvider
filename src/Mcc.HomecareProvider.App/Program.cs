@@ -12,20 +12,18 @@ namespace Mcc.HomecareProvider.App
         {
             void InitDb(IHost host)
             {
-                using (var scope = host.Services.CreateScope())
+                using var scope = host.Services.CreateScope();
+                var services = scope.ServiceProvider;
+                try
                 {
-                    var services = scope.ServiceProvider;
-                    try
-                    {
-                        var dbInitializer = services.GetRequiredService<DbInitializer>();
-                        dbInitializer.Initialize();
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = services.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "An error occurred while initializing the database.");
-                        throw;
-                    }
+                    var dbInitializer = services.GetRequiredService<DbInitializer>();
+                    dbInitializer.Initialize();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while initializing the database.");
+                    throw;
                 }
             }
 
