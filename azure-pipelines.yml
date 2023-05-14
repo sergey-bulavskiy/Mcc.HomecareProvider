@@ -118,7 +118,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - template: ./ci/azure-deploy-kubernetes.yml
+                - template: ./.ci/azure-deploy-kubernetes.yml
                   parameters:
                     kubeconfig: ${{ variables.KUBECONFIG }}
                     stage: 'dev'
