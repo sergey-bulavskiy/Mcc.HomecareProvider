@@ -23,7 +23,7 @@ steps:
     displayName: export env. variables and kubeconfig
 
   - script: |
-      kubectl create namespace testqa 
+      kubectl create namespace testqa || echo "continue"
     displayName: create namespace
 
   - script: |
