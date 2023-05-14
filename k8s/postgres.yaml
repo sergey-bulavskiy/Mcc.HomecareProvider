@@ -51,7 +51,7 @@ spec:
             claimName: postgres-volume-pvc
       containers:
         - name: testqa-main-postgres
-          image: postgres:latest
+          image: postgres:15
           ports:
             - containerPort: 5432
           envFrom:
@@ -64,7 +64,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: postgres2
   namespace: testqa
 spec:
   type: LoadBalancer
