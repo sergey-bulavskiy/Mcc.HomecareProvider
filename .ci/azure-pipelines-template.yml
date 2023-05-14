@@ -119,87 +119,12 @@ stages:
           - template: ./_stages/dev.yml
         condition: succeeded()
         jobs:
-          - deployment:
-            environment:
-              name: 'DEV'
-              resourceType: VirtualMachine
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - ${{ if eq(variables.DEPLOY_KUBERNETES, true) }}:
-                        - template: ./azure-deploy-kubernetes.yml
-                          parameters:
-                            kubeconfig: ${{ variables.KUBECONFIG }}
-                            stage: 'dev'
-                    - ${{ if not(eq(variables.DEPLOY_KUBERNETES, true)) }}:
-                        - template: ./azure-deploy.yml
-
-  - ${{ if variables.TAG_SOURCES_DEV }}:
-      - stage: TagDevSources
-        dependsOn: DeployToDev
-        condition: succeeded()
-        jobs:
           - job:
-            pool:
-              vmImage: ubuntu-latest
-            steps:
-              - checkout: self
-                persistCredentials: true
-              - script: |
-                  git tag '$(TAG_SOURCES_DEV)' -f
-                  git push origin '$(TAG_SOURCES_DEV)' -f --tags
-
-  - ${{ if eq(variables.ENABLE_E2E_STAGE, true) }}:
-      - stage: e2e
-        dependsOn:
-          - Build
-        jobs:
-          - job:
-            strategy:
-              parallel: ${{ variables.e2e_test_shards }}
             pool:
               vmImage: 'ubuntu-latest'
             steps:
-              - template: ./tests/e2e-stage.yml
+              - template: ./azure-deploy-kubernetes.yml
+                parameters:
+                  kubeconfig: ${{ variables.KUBECONFIG }}
+                  stage: 'dev'
 
-  - ${{ if and(eq(variables.ENABLE_DEPLOY, true), eq(variables.ENABLE_PROD_DEPLOY, true)) }}:
-      - stage: DeployToProd
-        dependsOn:
-          - Build
-          - DockerTag
-        variables:
-          - template: ./_stages/_default.yml
-          - template: ./_stages/prod.yml
-        condition: succeeded()
-        jobs:
-          - deployment:
-            environment:
-              name: 'PROD'
-              resourceType: VirtualMachine
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - ${{ if eq(variables.DEPLOY_KUBERNETES, true) }}:
-                        - template: ./azure-deploy-kubernetes.yml
-                          parameters:
-                            kubeconfig: ${{ variables.KUBECONFIG }}
-                            stage: 'prod'
-                    - ${{ if not(eq(variables.DEPLOY_KUBERNETES, true)) }}:
-                        - template: ./azure-deploy.yml
-
-  - ${{ if variables.TAG_SOURCES_PROD }}:
-      - stage: TagProdSources
-        dependsOn: DeployToProd
-        condition: succeeded()
-        jobs:
-          - job:
-            pool:
-              vmImage: ubuntu-latest
-            steps:
-              - checkout: self
-                persistCredentials: true
-              - script: |
-                  git tag '$(TAG_SOURCES_PROD)' -f
-                  git push origin '$(TAG_SOURCES_PROD)' -f --tags
