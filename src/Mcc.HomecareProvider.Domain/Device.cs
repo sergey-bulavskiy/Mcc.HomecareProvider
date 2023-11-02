@@ -20,7 +20,7 @@ namespace Mcc.HomecareProvider.Domain
         public Guid Id { get; set; }
         public string SerialNumber { get; }
         public DateTimeOffset CreatedAt { get; }
-        public List<DeviceBinding> DeviceBindings { get; }
+        public List<DeviceBinding> DeviceBindings { get; private set; }
         public DeviceBinding CurrentBinding { get; private set; }
 
         public bool IsAssignedToPatient => CurrentBinding.HasPatient();
@@ -30,10 +30,11 @@ namespace Mcc.HomecareProvider.Domain
         {
             if (patient == null) throw new ArgumentNullException(nameof(patient));
 
-            EnsurePropertyLoaded(nameof(CurrentBinding), CurrentBinding);
+            EnsurePropertyLoaded(nameof(DeviceBindings), DeviceBindings);
             var binding = new DeviceBinding(this, patient, currentTime);
             binding.InitializeWithPatient(patient, currentTime);
             CurrentBinding = binding;
+            DeviceBindings ??= new();
             DeviceBindings.Add(binding);
             patient.BindDevice(CurrentBinding, currentTime);
 

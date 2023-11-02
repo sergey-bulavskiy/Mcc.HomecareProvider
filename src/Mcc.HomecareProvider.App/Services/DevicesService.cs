@@ -47,7 +47,9 @@ namespace Mcc.HomecareProvider.App.Services
                     $"Given {nameof(dto.PatientId)}: {dto.PatientId} is not found in the database.");
             }
 
-            var device = await _dbContext.Devices.SingleOrDefaultAsync(d => d.Id == dto.DeviceId);
+            var device = await _dbContext.Devices
+                .Include(x=>x.DeviceBindings)
+                .SingleOrDefaultAsync(d => d.Id == dto.DeviceId);
             if (device is null)
             {
                 await DeletePatientIfExists(dto.PatientId);
